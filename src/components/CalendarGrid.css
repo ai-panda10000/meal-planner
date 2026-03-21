@@ -1,0 +1,106 @@
+/* Calendar grid layout */
+.calendar-grid {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+/* Day name headers */
+.calendar-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.calendar-header-cell {
+  padding: var(--spacing-sm);
+  text-align: center;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+/* Calendar body */
+.calendar-body {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+/* Individual day cell */
+.calendar-cell {
+  min-height: 70px;
+  padding: 4px;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Remove right border on last column */
+.calendar-cell:nth-child(7n) {
+  border-right: none;
+}
+
+/* Remove bottom border on last row */
+.calendar-body > .calendar-cell:nth-last-child(-n+7) {
+  border-bottom: none;
+}
+
+.calendar-cell:hover {
+  background: var(--color-primary-pale);
+}
+
+/* Dimmed cells for days outside current month */
+.calendar-cell.other-month {
+  opacity: 0.3;
+}
+
+/* Today's cell highlighted */
+.calendar-cell.today {
+  background: var(--color-primary-pale);
+}
+
+.calendar-cell.today .calendar-day-number {
+  background: var(--color-primary);
+  color: white;
+  border-radius: var(--radius-full);
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-day-number {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 2px;
+}
+
+/* Meals inside calendar cells */
+.calendar-meals {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.calendar-meal {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.calendar-meal-name {
+  font-size: 0.6rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}

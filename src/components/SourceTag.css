@@ -1,0 +1,33 @@
+.source-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Nadia = blue theme */
+.source-tag-nadia {
+  background: var(--color-blue-light);
+  color: var(--color-blue);
+}
+
+/* Instagram = pink theme */
+.source-tag-instagram {
+  background: var(--color-pink-light);
+  color: var(--color-pink);
+}
+
+/* Free = gray theme */
+.source-tag-free {
+  background: var(--color-gray-light);
+  color: var(--color-gray);
+}
+
+/* Small size for calendar cells */
+.source-tag-small {
+  padding: 0.1rem 0.35rem;
+  font-size: 0.65rem;
+}

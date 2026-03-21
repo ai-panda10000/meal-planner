@@ -1,0 +1,74 @@
+.month-mini {
+  cursor: pointer;
+  padding: var(--spacing-md);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.month-mini:active {
+  transform: scale(0.97);
+}
+
+.month-mini-title {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text);
+}
+
+/* Compact 7-column grid */
+.month-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+}
+
+.month-mini-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2px 0;
+  min-height: 20px;
+}
+
+.month-mini-cell.other-month {
+  opacity: 0.2;
+}
+
+.month-mini-cell.today .month-mini-day {
+  background: var(--color-primary);
+  color: white;
+  border-radius: var(--radius-full);
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.month-mini-day {
+  font-size: 0.6rem;
+  color: var(--color-text-secondary);
+  line-height: 1;
+}
+
+/* Colored dot indicating a meal exists */
+.month-mini-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  margin-top: 1px;
+}
+
+/* Dot colors matching source tag colors */
+.dot-nadia {
+  background: var(--color-blue);
+}
+
+.dot-instagram {
+  background: var(--color-pink);
+}
+
+.dot-free {
+  background: var(--color-gray);
+}

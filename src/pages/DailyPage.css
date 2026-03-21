@@ -1,0 +1,93 @@
+/* Daily page header with date navigation */
+.daily-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-xl);
+  gap: var(--spacing-sm);
+}
+
+.daily-date-info {
+  text-align: center;
+  flex: 1;
+}
+
+.daily-date {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.today-btn {
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-pale);
+  margin-top: var(--spacing-xs);
+}
+
+/* Navigation arrows for prev/next day */
+.nav-arrow {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-2xl);
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.nav-arrow:hover {
+  background: var(--color-bg-secondary);
+  color: var(--color-primary);
+}
+
+/* Meal sections */
+.daily-meals {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.meal-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.meal-section-title {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.meal-section-icon {
+  font-size: var(--font-size-lg);
+}
+
+/* Add meal button - styled like an empty card */
+.add-meal-btn {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  border: 2px dashed var(--color-border);
+  background: transparent;
+  box-shadow: none;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  width: 100%;
+}
+
+.add-meal-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-pale);
+}

@@ -1,0 +1,66 @@
+.meal-card {
+  position: relative;
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.meal-card:active {
+  transform: scale(0.98);
+}
+
+.meal-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+.meal-card-name {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meal-card-note {
+  margin-top: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.meal-card-delete {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+  transition: all var(--transition-fast);
+  opacity: 0;
+}
+
+.meal-card:hover .meal-card-delete,
+.meal-card:active .meal-card-delete {
+  opacity: 1;
+}
+
+/* Always show delete button on touch devices */
+@media (hover: none) {
+  .meal-card-delete {
+    opacity: 1;
+  }
+}
+
+.meal-card-delete:hover {
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+}

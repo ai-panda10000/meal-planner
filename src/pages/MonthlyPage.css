@@ -1,0 +1,12 @@
+.monthly-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-lg);
+}
+
+.monthly-title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  text-align: center;
+}

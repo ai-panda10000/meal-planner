@@ -1,0 +1,47 @@
+.meal-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Source selector - row of 3 toggle buttons */
+.source-selector {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.source-btn {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  border: 2px solid var(--color-border);
+  transition: all var(--transition-fast);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+}
+
+/* Active state for each source type */
+.source-btn-nadia.active {
+  border-color: var(--color-blue);
+  background: var(--color-blue-light);
+  color: var(--color-blue);
+}
+
+.source-btn-instagram.active {
+  border-color: var(--color-pink);
+  background: var(--color-pink-light);
+  color: var(--color-pink);
+}
+
+.source-btn-free.active {
+  border-color: var(--color-gray);
+  background: var(--color-gray-light);
+  color: var(--color-gray);
+}

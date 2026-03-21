@@ -1,0 +1,103 @@
+/* Weekly page header */
+.weekly-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-lg);
+}
+
+.weekly-title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Weekly grid - vertical list of day cards */
+.weekly-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* Individual day card */
+.weekly-day {
+  padding: var(--spacing-md);
+}
+
+.weekly-day-today {
+  border-color: var(--color-primary);
+  border-width: 2px;
+}
+
+.weekly-day-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.weekly-day-name {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  min-width: 32px;
+}
+
+.weekly-day-date {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Two meal slots side by side */
+.weekly-day-meals {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.weekly-meal-slot {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  min-height: 40px;
+}
+
+.weekly-meal-slot:hover {
+  background: var(--color-bg-secondary);
+}
+
+.weekly-meal-slot.has-meal {
+  background: var(--color-primary-pale);
+}
+
+.weekly-meal-type {
+  font-size: var(--font-size-sm);
+  flex-shrink: 0;
+}
+
+.weekly-meal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.weekly-meal-name {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.weekly-meal-empty {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
