@@ -1,9 +1,10 @@
 // Weekly page - shows 7 days of meals in a vertical list
 // Each day shows lunchbox and dinner side by side
+// 📝 Now shows multiple dishes per meal type
 import { useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMeals } from '../hooks/useMeals';
-import { upsertMeal, deleteMeal } from '../lib/storage';
+import { saveMeal, deleteMeal, sortDishesByCategory } from '../lib/storage';
 import {
   parseDate, formatDate, formatShortDate, getWeekStart,
   getWeekRange, getWeekDays, addDays, today, DAY_NAMES
@@ -40,16 +41,16 @@ export default function WeeklyPage() {
     navigate(`/weekly/${formatDate(newDate)}`);
   }
 
-  // Open form to add/edit a meal
-  function openForm(date, mealType, existingMeal = null) {
+  // Open form to add a new meal for a specific date and type
+  function openAddForm(date, mealType) {
     setFormDate(date);
     setFormMealType(mealType);
-    setFormInitialData(existingMeal);
+    setFormInitialData(null);
     setFormOpen(true);
   }
 
   const handleSave = useCallback((mealData) => {
-    upsertMeal(mealData);
+    saveMeal(mealData);
     refetch();
   }, [refetch]);
 
@@ -79,8 +80,9 @@ export default function WeeklyPage() {
           {weekDays.map((dayDate, index) => {
             const dateStr = formatDate(dayDate);
             const dayMeals = mealsByDate.get(dateStr) || [];
-            const lunchbox = dayMeals.find(m => m.meal_type === 'lunchbox');
-            const dinner = dayMeals.find(m => m.meal_type === 'dinner');
+            // 📝 Get all dishes for each type (not just one)
+            const lunchboxMeals = sortDishesByCategory(dayMeals.filter(m => m.meal_type === 'lunchbox'));
+            const dinnerMeals = sortDishesByCategory(dayMeals.filter(m => m.meal_type === 'dinner'));
             const isToday = dateStr === today();
 
             return (
@@ -93,35 +95,44 @@ export default function WeeklyPage() {
 
                 {/* Two meal slots side by side */}
                 <div className="weekly-day-meals">
-                  {/* Lunchbox slot */}
+                  {/* 📝 Lunchbox slot - click navigates to daily page for full editing */}
                   <div
-                    className={`weekly-meal-slot ${lunchbox ? 'has-meal' : ''}`}
-                    onClick={() => openForm(dateStr, 'lunchbox', lunchbox)}
+                    className={`weekly-meal-slot ${lunchboxMeals.length > 0 ? 'has-meal' : ''}`}
+                    onClick={() => navigate(`/day/${dateStr}`)}
                   >
                     <span className="weekly-meal-type">🍱</span>
-                    {lunchbox ? (
+                    {lunchboxMeals.length > 0 ? (
                       <div className="weekly-meal-info">
-                        <span className="weekly-meal-name">{lunchbox.meal_name}</span>
-                        <SourceTag source={lunchbox.source} size="small" />
+                        {/* Show all dish names in a compact list */}
+                        {lunchboxMeals.map(m => (
+                          <span key={m.id} className="weekly-meal-name">{m.meal_name}</span>
+                        ))}
                       </div>
                     ) : (
-                      <span className="weekly-meal-empty">+</span>
+                      <span
+                        className="weekly-meal-empty"
+                        onClick={(e) => { e.stopPropagation(); openAddForm(dateStr, 'lunchbox'); }}
+                      >+</span>
                     )}
                   </div>
 
-                  {/* Dinner slot */}
+                  {/* 📝 Dinner slot - click navigates to daily page for full editing */}
                   <div
-                    className={`weekly-meal-slot ${dinner ? 'has-meal' : ''}`}
-                    onClick={() => openForm(dateStr, 'dinner', dinner)}
+                    className={`weekly-meal-slot ${dinnerMeals.length > 0 ? 'has-meal' : ''}`}
+                    onClick={() => navigate(`/day/${dateStr}`)}
                   >
                     <span className="weekly-meal-type">🍽️</span>
-                    {dinner ? (
+                    {dinnerMeals.length > 0 ? (
                       <div className="weekly-meal-info">
-                        <span className="weekly-meal-name">{dinner.meal_name}</span>
-                        <SourceTag source={dinner.source} size="small" />
+                        {dinnerMeals.map(m => (
+                          <span key={m.id} className="weekly-meal-name">{m.meal_name}</span>
+                        ))}
                       </div>
                     ) : (
-                      <span className="weekly-meal-empty">+</span>
+                      <span
+                        className="weekly-meal-empty"
+                        onClick={(e) => { e.stopPropagation(); openAddForm(dateStr, 'dinner'); }}
+                      >+</span>
                     )}
                   </div>
                 </div>

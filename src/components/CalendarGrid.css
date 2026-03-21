@@ -104,3 +104,9 @@
   white-space: nowrap;
   flex: 1;
 }
+
+/* "+N" count shown when there are more dishes than can be displayed */
+.calendar-meal-count {
+  font-weight: 400;
+  color: var(--color-text-muted);
+}

@@ -8,6 +8,17 @@
   transform: scale(0.98);
 }
 
+/* Small label showing dish category (Main, Side, Soup, etc.) */
+.meal-card-category {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin-bottom: 2px;
+}
+
 .meal-card-header {
   display: flex;
   align-items: center;

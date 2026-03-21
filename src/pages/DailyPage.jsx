@@ -1,10 +1,11 @@
 // Daily page - the main/home page
 // Shows lunchbox and dinner meals for a single day
 // Users can add, edit, and delete meals from this view
+// 📝 Now supports multiple dishes per lunchbox/dinner (e.g. main + side + soup)
 import { useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMeals } from '../hooks/useMeals';
-import { upsertMeal, deleteMeal } from '../lib/storage';
+import { saveMeal, deleteMeal, sortDishesByCategory } from '../lib/storage';
 import { formatDate, formatDisplayDate, parseDate, addDays, today } from '../lib/dateUtils';
 import MealCard from '../components/MealCard';
 import MealForm from '../components/MealForm';
@@ -30,9 +31,11 @@ export default function DailyPage() {
   // Confirm delete dialog state
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  // Find meals for each type
-  const lunchbox = meals.find(m => m.meal_type === 'lunchbox');
-  const dinner = meals.find(m => m.meal_type === 'dinner');
+  // 📝 Find ALL meals for each type (not just one)
+  // .filter() returns an array of all matching meals
+  // sortDishesByCategory puts them in order: Main → Side → Soup → Salad → Other
+  const lunchboxMeals = sortDishesByCategory(meals.filter(m => m.meal_type === 'lunchbox'));
+  const dinnerMeals = sortDishesByCategory(meals.filter(m => m.meal_type === 'dinner'));
 
   // Navigate to previous or next day
   function goToDay(offset) {
@@ -53,8 +56,10 @@ export default function DailyPage() {
   }
 
   // Save meal handler - called by the MealForm component
+  // 📝 Now uses saveMeal instead of upsertMeal
+  // saveMeal creates a new record if no id, or updates if id exists
   const handleSave = useCallback((mealData) => {
-    upsertMeal(mealData);
+    saveMeal(mealData);
     refetch();
   }, [refetch]);
 
@@ -91,20 +96,22 @@ export default function DailyPage() {
             <h2 className="meal-section-title">
               <span className="meal-section-icon">🍱</span> Lunchbox
             </h2>
-            {lunchbox ? (
+            {/* 📝 Show ALL lunchbox dishes as a list of cards */}
+            {lunchboxMeals.map(meal => (
               <MealCard
-                meal={lunchbox}
-                onEdit={() => openForm('lunchbox', lunchbox)}
-                onDelete={() => setDeleteTarget(lunchbox)}
+                key={meal.id}
+                meal={meal}
+                onEdit={() => openForm('lunchbox', meal)}
+                onDelete={() => setDeleteTarget(meal)}
               />
-            ) : (
-              <button
-                className="add-meal-btn card"
-                onClick={() => openForm('lunchbox')}
-              >
-                + Add Lunchbox
-              </button>
-            )}
+            ))}
+            {/* 📝 Always show the Add button so users can add more dishes */}
+            <button
+              className="add-meal-btn card"
+              onClick={() => openForm('lunchbox')}
+            >
+              + Add Lunchbox
+            </button>
           </section>
 
           {/* Dinner section */}
@@ -112,24 +119,26 @@ export default function DailyPage() {
             <h2 className="meal-section-title">
               <span className="meal-section-icon">🍽️</span> Dinner
             </h2>
-            {dinner ? (
+            {/* 📝 Show ALL dinner dishes as a list of cards */}
+            {dinnerMeals.map(meal => (
               <MealCard
-                meal={dinner}
-                onEdit={() => openForm('dinner', dinner)}
-                onDelete={() => setDeleteTarget(dinner)}
+                key={meal.id}
+                meal={meal}
+                onEdit={() => openForm('dinner', meal)}
+                onDelete={() => setDeleteTarget(meal)}
               />
-            ) : (
-              <button
-                className="add-meal-btn card"
-                onClick={() => openForm('dinner')}
-              >
-                + Add Dinner
-              </button>
-            )}
+            ))}
+            {/* 📝 Always show the Add button so users can add more dishes */}
+            <button
+              className="add-meal-btn card"
+              onClick={() => openForm('dinner')}
+            >
+              + Add Dinner
+            </button>
           </section>
 
           {/* Show empty state only when no meals at all */}
-          {!lunchbox && !dinner && (
+          {lunchboxMeals.length === 0 && dinnerMeals.length === 0 && (
             <EmptyState
               title="No meals planned"
               message="Tap the + buttons above to plan your meals"

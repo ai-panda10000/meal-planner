@@ -1,8 +1,53 @@
 // Local storage for meal plans
 // Saves all meal data in the browser's localStorage
-// Data is stored as a JSON object keyed by "date|meal_type"
+// Each meal is a separate record with a unique ID
 
 const STORAGE_KEY = 'meal_plans';
+
+// 📝 Dish categories for each meal type
+// Lunchbox has Main and Side, Dinner has Main, Side, Soup, and Salad
+// Both have "Other" for custom categories the user can name themselves
+export const DISH_CATEGORIES = {
+  lunchbox: [
+    { value: 'main', label: 'Main' },
+    { value: 'side', label: 'Side' },
+    { value: 'other', label: 'Other' },
+  ],
+  dinner: [
+    { value: 'main', label: 'Main' },
+    { value: 'side', label: 'Side' },
+    { value: 'soup', label: 'Soup' },
+    { value: 'salad', label: 'Salad' },
+    { value: 'other', label: 'Other' },
+  ],
+};
+
+// 📝 Priority order for sorting dishes within a meal type
+// Main dishes appear first, then sides, then soup/salad, then custom
+const CATEGORY_ORDER = ['main', 'side', 'soup', 'salad'];
+
+// Sort dishes by category priority, then by creation date
+export function sortDishesByCategory(dishes) {
+  return [...dishes].sort((a, b) => {
+    const orderA = CATEGORY_ORDER.indexOf(a.dish_category);
+    const orderB = CATEGORY_ORDER.indexOf(b.dish_category);
+    // If category is not in the list (custom), put it at the end
+    const priorityA = orderA >= 0 ? orderA : CATEGORY_ORDER.length;
+    const priorityB = orderB >= 0 ? orderB : CATEGORY_ORDER.length;
+    if (priorityA !== priorityB) return priorityA - priorityB;
+    // Same priority → sort by creation time
+    return (a.created_at || '').localeCompare(b.created_at || '');
+  });
+}
+
+// 📝 Get a display label for a dish_category value
+// For known categories (main, side, soup, salad) returns the capitalized name
+// For custom categories, returns the custom text as-is
+export function getCategoryLabel(category) {
+  if (!category) return 'Main';
+  const known = { main: 'Main', side: 'Side', soup: 'Soup', salad: 'Salad' };
+  return known[category] || category;
+}
 
 // Read all meals from localStorage
 function getAllMeals() {
@@ -25,6 +70,23 @@ function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
 
+// 📝 Migration function: adds dish_category to existing meals that don't have it
+// This runs once on app startup so old data works with the new multi-dish feature
+export function migrateMeals() {
+  const meals = getAllMeals();
+  let changed = false;
+  for (const meal of meals) {
+    if (!meal.dish_category) {
+      // Default existing meals to "main" category
+      meal.dish_category = 'main';
+      changed = true;
+    }
+  }
+  if (changed) {
+    saveAllMeals(meals);
+  }
+}
+
 // Fetch meals within a date range
 // Filters the stored meals by date (inclusive)
 export function getMealsByDateRange(startDate, endDate) {
@@ -32,20 +94,21 @@ export function getMealsByDateRange(startDate, endDate) {
   return meals.filter(m => m.date >= startDate && m.date <= endDate);
 }
 
-// Insert or update a meal
-// If a meal already exists for the same date + meal_type, it gets updated
-export function upsertMeal({ date, meal_type, meal_name, source, source_note }) {
+// 📝 Save a meal (add new or update existing)
+// NEW behavior: uses the meal's "id" to find existing records
+// This allows multiple dishes per date + meal_type (e.g. main dish AND side dish)
+// Old behavior used date+meal_type as unique key, which only allowed one meal per slot
+export function saveMeal({ id, date, meal_type, dish_category, meal_name, source, source_note }) {
   const meals = getAllMeals();
 
-  // Check if a meal already exists for this date and type
-  const existingIndex = meals.findIndex(
-    m => m.date === date && m.meal_type === meal_type
-  );
+  // If an id is provided, look for an existing meal to update
+  const existingIndex = id ? meals.findIndex(m => m.id === id) : -1;
 
   const mealData = {
     id: existingIndex >= 0 ? meals[existingIndex].id : generateId(),
     date,
     meal_type,
+    dish_category: dish_category || 'main',
     meal_name,
     source,
     source_note: source_note || '',
@@ -57,7 +120,7 @@ export function upsertMeal({ date, meal_type, meal_name, source, source_note }) 
     // Update existing meal
     meals[existingIndex] = mealData;
   } else {
-    // Add new meal
+    // Add as a new meal
     meals.push(mealData);
   }
 
@@ -103,7 +166,8 @@ export function exportToJson() {
 }
 
 // Import meals from a JSON file
-// Merges imported data with existing data (overwrites matching date+type)
+// 📝 NEW: matches by id instead of date+meal_type
+// This supports multiple dishes per date+meal_type
 export function importFromJson(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -119,18 +183,20 @@ export function importFromJson(file) {
 
         const currentMeals = getAllMeals();
 
-        // Merge: imported meals overwrite existing ones with same date+type
+        // Merge: imported meals overwrite existing ones with same id
         for (const meal of imported) {
           if (!meal.date || !meal.meal_type || !meal.meal_name) continue;
 
-          const existingIndex = currentMeals.findIndex(
-            m => m.date === meal.date && m.meal_type === meal.meal_type
-          );
+          // Match by id if available, otherwise add as new
+          const existingIndex = meal.id
+            ? currentMeals.findIndex(m => m.id === meal.id)
+            : -1;
 
           const mealData = {
             id: meal.id || generateId(),
             date: meal.date,
             meal_type: meal.meal_type,
+            dish_category: meal.dish_category || 'main',
             meal_name: meal.meal_name,
             source: meal.source || 'free',
             source_note: meal.source_note || '',

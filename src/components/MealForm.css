@@ -45,3 +45,29 @@
   background: var(--color-gray-light);
   color: var(--color-gray);
 }
+
+/* Dish category selector - same layout as source selector */
+.category-selector {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.category-btn {
+  flex: 1;
+  min-width: 60px;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  border: 2px solid var(--color-border);
+  transition: all var(--transition-fast);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+}
+
+.category-btn.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light, #e8f0fe);
+  color: var(--color-primary);
+}

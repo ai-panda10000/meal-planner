@@ -1,5 +1,6 @@
 // Calendar grid component for the monthly view
 // Renders a traditional month calendar with meal info in each cell
+// 📝 Now shows multiple dishes per day with a "+N" count when there are extras
 import { useNavigate } from 'react-router-dom';
 import { getCalendarDays, DAY_NAMES } from '../lib/dateUtils';
 import SourceTag from './SourceTag';
@@ -30,8 +31,9 @@ export default function CalendarGrid({ year, month, mealsByDate }) {
       <div className="calendar-body">
         {days.map(day => {
           const dayMeals = mealsByDate.get(day.dateStr) || [];
-          const lunchbox = dayMeals.find(m => m.meal_type === 'lunchbox');
-          const dinner = dayMeals.find(m => m.meal_type === 'dinner');
+          // 📝 Get all dishes for each meal type
+          const lunchboxMeals = dayMeals.filter(m => m.meal_type === 'lunchbox');
+          const dinnerMeals = dayMeals.filter(m => m.meal_type === 'dinner');
 
           return (
             <div
@@ -43,16 +45,28 @@ export default function CalendarGrid({ year, month, mealsByDate }) {
 
               {/* Show meal names if any exist */}
               <div className="calendar-meals">
-                {lunchbox && (
+                {/* 📝 Show first lunchbox dish name + count of extras */}
+                {lunchboxMeals.length > 0 && (
                   <div className="calendar-meal">
-                    <span className="calendar-meal-name">{lunchbox.meal_name}</span>
-                    <SourceTag source={lunchbox.source} size="small" />
+                    <span className="calendar-meal-name">
+                      {lunchboxMeals[0].meal_name}
+                      {lunchboxMeals.length > 1 && (
+                        <span className="calendar-meal-count"> +{lunchboxMeals.length - 1}</span>
+                      )}
+                    </span>
+                    <SourceTag source={lunchboxMeals[0].source} size="small" />
                   </div>
                 )}
-                {dinner && (
+                {/* 📝 Show first dinner dish name + count of extras */}
+                {dinnerMeals.length > 0 && (
                   <div className="calendar-meal">
-                    <span className="calendar-meal-name">{dinner.meal_name}</span>
-                    <SourceTag source={dinner.source} size="small" />
+                    <span className="calendar-meal-name">
+                      {dinnerMeals[0].meal_name}
+                      {dinnerMeals.length > 1 && (
+                        <span className="calendar-meal-count"> +{dinnerMeals.length - 1}</span>
+                      )}
+                    </span>
+                    <SourceTag source={dinnerMeals[0].source} size="small" />
                   </div>
                 )}
               </div>
